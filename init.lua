@@ -35,6 +35,13 @@ _M.settings = {
 	preview_box_title_font = {"sans","italic","normal"},
 	preview_box_title_font_size_factor = 0.8,
 	preview_box_title_color = {0,0,0,1},
+        -- Michalis additions
+        preview_box_title_shift_y = 0,
+        preview_font_scale = 0.5,
+        preview_size_non_selected = 0.8,
+        preview_size_selected = 0.9,
+        preview_overlay_non_selected = 0.6,
+        preview_overlay_selected = 0.0,
 
 	client_opacity = false,
 	client_opacity_value_selected = 1,
@@ -164,9 +171,9 @@ end
 
 function _M.createPreviewText(client)
 	if client.class then
-		return " - " .. client.class
+		return " " .. client.class
 	else
-		return " - " .. client.name
+		return " " .. client.name
 	end
 end
 
@@ -281,7 +288,7 @@ function _M.preview()
 	local text, textWidth, textHeight, maxText
 	local maxTextWidth = 0
 	local maxTextHeight = 0
-	local bigFont = textboxHeight / 2
+	local bigFont = _M.settings.preview_font_scale * textboxHeight
 	cr:set_font_size(fontSize)
 	for i = 1, #leftRightTab do
 		text = _M.createPreviewText(leftRightTab[i])
@@ -319,12 +326,12 @@ function _M.preview()
 		_M.preview_widgets[i].draw = function(preview_widget, preview_wbox, cr, width, height)
 			if width ~= 0 and height ~= 0 then
 
-				local a = 0.8
-				local overlay = 0.6
+				local a = _M.settings.preview_size_non_selected
+				local overlay = _M.settings.preview_overlay_non_selected
 				local fontSize = smallFont
 				if c == _M.altTabTable[_M.altTabIndex].client then
-					a = 0.9
-					overlay = 0
+					a = _M.settings.preview_size_selected
+					overlay = _M.settings.preview_overlay_selected
 					fontSize = bigFont
 				end
 
@@ -355,7 +362,7 @@ function _M.preview()
 
 				-- Draw icons
 				tx = (w - titleboxWidth) / 2
-				ty = h
+				ty = h + _M.settings.preview_box_title_shift_y
 				sx = iconboxWidth / icon.width
 				sy = iconboxHeight  / icon.height
 
@@ -368,7 +375,7 @@ function _M.preview()
 
 				-- Draw titles
 				tx = tx + iconboxWidth
-				ty = h + (textboxHeight + textHeight) / 2
+				ty = h + (textboxHeight + textHeight) / 2 + _M.settings.preview_box_title_shift_y
 
 				cr:set_source_rgba(unpack(_M.settings.preview_box_title_color))
 				cr:move_to(tx, ty)
