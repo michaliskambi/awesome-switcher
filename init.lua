@@ -43,6 +43,8 @@ _M.settings = {
         preview_overlay_non_selected = 0.6,
         preview_overlay_selected = 0.0,
 
+        show_minimized = true,
+
 	client_opacity = false,
 	client_opacity_value_selected = 1,
 	client_opacity_value_in_focus = 0.5,
@@ -122,6 +124,9 @@ function _M.getClients()
 				end
 			end
 
+			if (not _M.settings.show_minimized) and c.minimized then
+				addToTable = false
+			end
 
 			if addToTable then
 				table.insert(clients, c)
@@ -517,7 +522,7 @@ function _M.switch(dir, mod_key1, release_key, mod_key2, key_switch)
 					end
 
 					keygrabber.stop()
-				
+
 				elseif key == key_switch and event == "press" then
 					if gears.table.hasitem(mod, mod_key2) then
 						-- Move to previous client on Shift-Tab
